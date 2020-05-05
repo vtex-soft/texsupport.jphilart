@@ -1,0 +1,81 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                               %%
+%% This is the template.tex file for the jphilart document class.%%
+%%                                                               %%
+%% You need the jphilart.cls in your current directory or in any %%
+%% directory scanned for cls files by your latex engine.         %%
+%%                                                               %%
+%% Manual inclusion of page layout commands is useless.          %%
+%%                                                               %%
+%% Note that any complex file will produce delayed publication!  %%
+%%                                                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% for lead article use class option: leadarticle
+\documentclass{jphilart}
+\hypersetup{
+    colorlinks,
+    linkcolor={blue},
+    citecolor={blue},
+    urlcolor={blue}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% The following items will be set by the Managing Editor.       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pubyear{2018}
+\pubmonth{0}
+\volume{0}
+\issue{0}
+\firstpage{1}
+\lastpage{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Please add here your own packages (be minimalistic please!):  %%
+%% Please avoid using exotic packages and keep things simple.    %%
+%% It is not necessary to include ams* and graphicx packages     %%
+%% since they are automatically included by the jphilart class.  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Please add your own macros and environments below             %%
+%% If possible, avoid using \def and use instead \newcommand     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\startlocaldefs
+\endlocaldefs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% No macro definitions below this line please!                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{frontmatter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Title                                                         %%
+%% Acknowledgements: \title{ \thanks{I would like to thank...}}  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\runtitle{}
+\title{} 
+% \title{ \thanks{}}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Authors                                                       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{aug}
+\author{}
+\address{}
+\end{aug}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Review essays and book reviews
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{review}
+% \title{} \author{}.
+% \end{review}
+\end{frontmatter}
+
+\end{document}
+
+%% EOF

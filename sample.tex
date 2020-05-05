@@ -1,0 +1,287 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                               %%
+%% This is the sample.tex file for the jphilart document class.  %%
+%%                                                               %%
+%% You need the jphilart.cls in your current directory or in any %%
+%% directory scanned for cls files by your latex engine.         %%
+%%                                                               %%
+%% Manual inclusion of page layout commands is useless.          %%
+%%                                                               %%
+%% Note that any complex file will produce delayed publication!  %%
+%%                                                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% for lead article use class option: leadarticle
+\documentclass{jphilart}
+\hypersetup{
+    colorlinks,
+    linkcolor={blue},
+    citecolor={blue},
+    urlcolor={blue}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% The following items will be set by the Managing Editor.       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pubyear{2018}
+\pubmonth{0}
+\volume{0}
+\issue{0}
+\firstpage{1}
+\lastpage{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Please add here your own packages (be minimalistic please!):  %%
+%% Please avoid using exotic packages and keep things simple.    %%
+%% It is not necessary to include ams* and graphicx packages     %%
+%% since they are automatically included by the jphilart class.  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{verbatim}
+%\usepackage{cleveref}  % uncomment to use this package
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Please add your own macros and environments below             %%
+%% If possible, avoid using \def and use instead \newcommand     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\startlocaldefs
+\newcommand{\ABS}[1]{\left(#1\right)} % example of author macro
+\newcommand{\jphilart}{\emph{jphilart}\ } % another example of author macro
+\newtheorem{theorem}{Theorem} % example of author environment
+\newtheorem*{fact*}{Fact} % another example of author environment
+\newtheorem{proposition}[theorem]{Proposition} % another example of author environment
+\endlocaldefs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% No macro definitions below this line please!                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\begin{frontmatter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Title (please edit and customize):                            %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\runtitle{Introduction to the \jphilart Class}
+\title{%
+    Introduction to the \jphilart Class%
+    \thanks{Supported by the Journal of Philosophy, Inc.}%
+    \thanks{%
+        Current maintainer of class file is
+        {VTeX, Lithuania} (\texttt{http://www.vtex.lt}).
+        Please send all queries to
+        \texttt{latex-support@vtex.lt}.
+        }%
+    } % \thanks is optional
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Authors (please edit and customize):                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{aug}
+\author{First-Name Surname}
+\address{Address of the Author}
+\end{aug}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Review essays and book reviews (please edit and customize):
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{review}
+% \title{Book title} \author{Book author}.
+% Publisher, year. Pages. Price.
+% \end{review}
+\end{frontmatter}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Please replace what follows by the body of your article       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\lettrine{T}he $\LaTeXe$ class \jphilart is designed for typesetting of articles
+for the \textit{Journal of Philosophy}. The \jphilart class comes with
+a commented sample file called \texttt{sample.tex}. You are probably
+reading the PDF version of this sample file, compiled with a pdflatex
+engine.
+
+{Papers using the \LaTeX\ class \jphilart are quicker published}.
+The \textit{Journal of Philosophy} need a standardized layout for all
+papers. For that reason, you are strongly encouraged to use the \LaTeX\
+class \jphilart for your papers.
+
+{An easy way to prepare an article for publication in the
+    \textit{Journal of Philosophy} is to edit the source file
+    \texttt{sample.tex} for this document. Replace the main
+    body of the file with the main body of your article. Supply
+    all metadata (title, authors, affiliations) that are requested
+    in the latex file.}
+
+You need a copy of the \texttt{jphilart.cls} file in your directory%
+\footnote{Or in any location scanned for \texttt{cls} files by your
+latex engine.} in order to compile documents based on the \jphilart
+class, such as \texttt{sample.tex}.
+
+The \jphilart document class loads automatically the following packages:
+\begin{center}
+  \ttfamily
+  amsmath, amsthm, amsfonts, amssymb, graphicx, enumitem, fontenc,
+  baskervald, lettrine, textcase
+\end{center}
+It is thus not necessary to add \verb+\usepackage+ load commands for
+these packages to your latex file. However, you may want to load
+additional packages, such as the \emph{cleveref} package by using a
+\verb+\usepackage+ command. The precise location of these extra load
+commands is clearly mentioned in the \texttt{sample.tex} file. The
+\jphilart class provides various environments, and also important commands
+such as \verb+\title+, \verb+\author+, etc.
+
+\section{Fonts}
+
+The default font used by the \jphilart class is \emph{NewBaskerville},
+i.e. it is checked if \texttt{t1pnb.fd} file exists in \LaTeX\ system.
+If it's not \emph{Baskervaldx} package is used as alternative.
+
+\emph{Latin Modern Sans} and \emph{Latin Modern Mono} is used for
+\textsf{sans serif} and \texttt{typewriter} fonts.\vfill\eject
+
+New font shape macro \verb+\textscit+ is introduced for \emph{italic}+\textsc{small caps} shape.
+
+The first letter of the article is typeset larger than the rest of the text.
+\jphilart class loads the \texttt{lettrine} package for this purpose.
+
+\section{Section headings}
+
+In \jphilart class section titles starting with \verb+\subsection+ are formatted as a
+run-in title, like the standard \verb+\paragraph+. Also at the end of these
+titles punctuation will be automatically inserted if missing.
+
+\subsection{A sub-section without punctuation} Some text
+
+\subsubsection{Another sub-sub-section with punctuation.} Some text
+
+\paragraph{A paragraph with exclamation mark!} Some text
+
+\subparagraph{A sub-paragraph with question mark?} Some text
+
+\section{Equations}\label{se:mysection}
+
+\jphilart class loads an \texttt{amsmath} package for mathematical typesseting.
+Display equations and their numbers are placed on the left-hand side.
+
+The following numbered displayed equation is the first in section \ref{se:mysection}:%
+\begin{equation}\label{eq:myequation}
+d(\alpha) \in \mathcal{D};
+\end{equation}
+It is produced with the following source code:
+\begin{verbatim}
+\begin{equation}\label{eq:myequation}
+d(\alpha) \in \mathcal{D};
+\end{equation}\end{verbatim}
+You may refer to it by using \verb+\eqref{eq:myequation}+ which
+produces~\eqref{eq:myequation}.
+
+Here is another numbered displayed equation
+\begin{equation}
+\begin{split}
+&d(\neg\phi) = d(\phi);\\
+&d(\phi\wedge\psi) = d(\phi)\odot d(\psi);\\
+&d(\phi\vee\psi) = d(\phi)\odot d(\psi);
+\end{split}
+\end{equation}
+
+\section{Quotations}
+
+You may add a quotation by using the \texttt{quote} environment.
+\begin{quote}
+   This is the body of the quotation.
+   It is inserted with the following environment
+   \begin{verbatim}
+       \begin{quote}
+           This is the body of ...
+       \end{quote}\end{verbatim}
+\end{quote}
+
+\section{Enunciations}
+
+\jphilart class loads \texttt{asmthm} package for typesetting enunciation
+environments. Author may use \verb+\newtheorem+ command in order to define
+environment for further use. The precise location of these extra load
+commands is clearly mentioned in the \texttt{sample.tex} file.
+
+\begin{theorem}[My theorem]\label{th:1}
+    This is the body of the theorem. This theorem has a name between
+    parentheses, and this is implemented by adding an optional parameter
+    between square brackets to the theorem environment, namely
+   \begin{verbatim}
+       \begin{theorem}[My theorem] \label{th:1}
+           This is the body of ...
+       \end{theorem}\end{verbatim}
+\end{theorem}
+
+\begin{proof}[Proof of Theorem \ref{th:1}]
+    This is the body of the proof of the theorem above. This proof has a name,
+    and this is implemented by adding an optional parameter between square
+    brackets to the proof environment, namely
+    \begin{verbatim}
+        \begin{proof}[Proof of Theorem \ref{th:1}]
+            This is the body of the proof of ...
+        \end{proof}\end{verbatim}
+    The proof ends at the square box.
+\end{proof}
+
+Note that a square box $\square$ is automatically added at the end of the
+proof by the environment ``proof''.
+
+Let us give some more examples of environments in action.
+
+\begin{fact*}[My fact]
+    Body of the Fact without a counter.
+    It is achieved by using asterisks in the definition, namely
+    \begin{verbatim}
+        \newtheorem*{fact*}{Fact}\end{verbatim}
+\end{fact*}
+
+\begin{proof}
+    This is the body of a proof environment without name, obtained using
+\end{proof}
+
+\begin{proposition}
+    Body of the proposition. This proposition does not have a name.
+    Its counter is related to theorem environment counter by the definition
+    \begin{verbatim}
+        \newtheorem{proposition}[theorem]{Proposition}\end{verbatim}
+\end{proposition}
+
+\section{How to include graphics}
+
+You may include graphics as follows
+\begin{small}
+\begin{verbatim}
+\begin{figure}[htbp]
+  \centering % gives better spacing than \begin{center}...\end{center}
+  \includegraphics[scale=1.0]{filename}
+  \caption{This is my figure.}
+  \label{fi:myfigure}
+\end{figure}\end{verbatim}
+\end{small}
+
+Note that in a figure environment, the \verb+\label+ should always appear
+after a \verb+\caption+ in order to produce a valid reference to the figure.
+You may play with the options \verb+[htbp]+ (see the \LaTeXe\ documentation
+for their meaning) and with the options of the \verb+\includegraphics+ command
+(see the documentation of the \texttt{graphicx} package).
+
+\section{How to include bibliography}
+
+
+
+No bibliographies will be published; bibliographical
+material should be put into notes\footnote{Journal citations should include:
+the first and last name of author(s), name of journal in full, volume number,
+issue number, month or season, year, the article's full range of pages, and,
+if applicable, the specified page or pages.
+
+Book references should include: the first and last name of author,
+publisher, U.S. city of publication, and date.}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% You have reached the end of your document.                    %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+
+%% EOF
