@@ -19,12 +19,14 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}[2009/09/24]
 \ProvidesClass{jphilart}
-    [2020/05/05 v1.0 Typesetting articles for The Journal of Philosophy]
+    [2020/01/12 v1.1 Typesetting articles for The Journal of Philosophy]
 \ClassInfo{jphilart}{Copyright (c) 2020 Edgaras Sakuras and Lolita Tolene, 
     VTeX Ltd., Lithuania for JPHIL.}
 \@input{jphilart-vtex.cfg}
 \newif\if@leadarticle \@leadarticlefalse
 \DeclareOption{leadarticle}{\@leadarticletrue}
+\newif\if@noaug \@noaugfalse
+\DeclareOption{noaug}{\@noaugtrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessOptions\relax
 \LoadClass[10pt,twoside]{article}
@@ -257,13 +259,44 @@
 \def\@copyrightyear{0}
 
 \setvaluelist{month}{January,February,March,April,May,June,July,August,September,October,November,December}
+
+% get multi value separated by comma
+% currently used for issue and pubmonth
+\def\get@and@set@multi@value#1#2{%
+    \csundef{multi@#1@first}%
+    \csundef{multi@#1@last}%
+    \def\do##1{%
+        \ifcsundef{multi@#1@first}%
+            {%
+                \csxdef{multi@#1@first}{##1}%
+            }%
+            {%
+                \csxdef{multi@#1@last}{##1}%
+                \ifnum\temp@multi@prev<\csuse{multi@#1@last}%
+                \else
+                    \@latex@error{wrong order of #1 numbers: current value \csuse{multi@#1@last} is equal or 
+                        less than previous \temp@multi@prev}{}%
+                \fi
+            }%
+            \edef\temp@multi@prev{##1}%
+        }%
+    \docsvlist{#2}%
+    \ifcsundef{multi@#1@last}%
+        {\csxdef{@#1}{\csuse{multi@#1@first}}}%
+        {\csxdef{@#1}{\csuse{multi@#1@first}\csuse{multi@#1@sep}\csuse{multi@#1@last}}}%
+    }
+
+\def\multi@pubmonth@sep{/}
+
+\def\pubmonth#1{\get@and@set@multi@value{pubmonth}{#1}}
 \def\@pubmonth{0}
-\def\pubmonth#1{\gdef\@pubmonth{#1}}
 
 \def\volume#1{\gdef\@volume{#1}}
 \gdef\@volume{0}
 
-\def\issue#1{\gdef\@issue{#1}}
+\def\multi@issue@sep{/}
+
+\def\issue#1{\get@and@set@multi@value{issue}{#1}}
 \gdef\@issue{0}
 
 \newcounter{firstpage}
@@ -403,13 +436,46 @@
     \egroup
     \vspace*{\posttitle@skip}%% gives ~6.3mm
     }
+\csdef{title@ends@with@\detokenize{?}@symbol}{1}
+\csdef{title@ends@with@\detokenize{!}@symbol}{1}
+\def\check@title@end@symbol#1#2\@nil{%
+    \ifx&#2&%
+        \ifcsundef{title@ends@with@\detokenize{#1}@symbol}%
+            {}%
+            {\edef\title@ends@with@symbol{1}}%
+    \else
+        \check@title@end@symbol#2\@nil
+    \fi
+    }
+\def\subtitle#1{%
+    \bgroup
+        \no@harm
+        \xdef\jphilart@tmp@title{\metadata@title}%
+    \egroup
+    \expandafter\check@title@end@symbol\jphilart@tmp@title\@nil
+    \@ifundefined{title@ends@with@symbol}%
+        {\gappto\metadata@title{. #1}}%
+        {\gappto\metadata@title{\space #1}}%
+    \vspace*{\presubtitle@skip}%
+    \bgroup
+        \title@style
+        \def\thanks##1{\NoCaseChange{\jphilart@thanks{##1}}}%
+        \MakeUppercase{#1}%
+        \par
+    \egroup
+    \vspace*{\postsubtitle@skip}
+    }
 
 \if@leadarticle
-\def\pretitle@skip{83.2\p@}
-\def\posttitle@skip{2\p@}
+    \def\pretitle@skip{83.2\p@}
+    \def\posttitle@skip{2\p@}
+    \def\presubtitle@skip{3.9\p@}
+    \def\postsubtitle@skip{3.5\p@}
 \else
-\def\pretitle@skip{-12\p@}
-\def\posttitle@skip{3.5\p@}
+    \def\pretitle@skip{-12\p@}
+    \def\posttitle@skip{3.5\p@}
+    \def\presubtitle@skip{2.4\p@}
+    \def\postsubtitle@skip{3.5\p@}
 \fi
 \def\title@style{\centering}
 %%
@@ -419,19 +485,19 @@
 
 \newcounter{jphil@aug}
 \newenvironment{aug}%
-    {%   
-         \stepcounter{jphil@aug}%
-         \expandafter\newbox\csname jphil@aug@\arabic{jphil@aug}\endcsname
-         \expandafter\expandafter\expandafter\global
-             \expandafter\setbox\csname jphil@aug@\arabic{jphil@aug}\endcsname=\vbox
-             \bgroup
-                 \hsize=\textwidth
+    {%
+        \stepcounter{jphil@aug}%
+        \expandafter\newbox\csname jphil@aug@\arabic{jphil@aug}\endcsname
+        \expandafter\expandafter\expandafter\global
+            \expandafter\setbox\csname jphil@aug@\arabic{jphil@aug}\endcsname=\vbox
+            \bgroup
+                \hsize=\textwidth
     }{%
-                 \format@single@aug@addresses
-             \egroup
-         \setcounter{jphil@author}{0}%
-         \setcounter{jphil@address}{0}%        
-         \smart@par
+                \format@single@aug@addresses
+            \egroup
+        \setcounter{jphil@author}{0}%
+        \setcounter{jphil@address}{0}%
+        \smart@par
     }
 
 %  Print author and address by number: \printaddressnum{1}
@@ -484,13 +550,16 @@
 
 \def\printaddresses{%
     \smart@par
-    \newcount\local@counter
-    \loop
-        \advance\local@counter+1\relax
-        \bigskip
-        \expandafter\unvbox\csname jphil@aug@\the\local@counter\endcsname
-    \ifnum \local@counter<\c@jphil@aug
-    \repeat
+    \if@noaug
+    \else
+        \newcount\local@counter
+        \loop
+            \advance\local@counter+1\relax
+            \bigskip
+            \expandafter\unvbox\csname jphil@aug@\the\local@counter\endcsname
+        \ifnum \local@counter<\c@jphil@aug
+        \repeat
+    \fi
     }
 \AtEndDocument{\printaddresses}
 %%
@@ -917,13 +986,18 @@
         !!%
     \fi
     }
+\def\copyrightholder#1{\gdef\copyright@holder{#1}}
+\@onlypreamble\copyrightholder
 \def\copyright@text{%
     \raisebox{15mm}[\z@][\z@]{\hb@xt@\textwidth{\copyright@size
         \@issn/\two@digits@lasttwo\@pubyear/%
-        \two@digits@lasttwo\@volume\two@digits@lasttwo\@issue/%
+        \two@digits@lasttwo\@volume%
+        \@ifundefined{multi@issue@last}
+            {\two@digits@lasttwo{\@issue}}
+            {\two@digits@lasttwo{\csuse{multi@issue@first}}-\two@digits@lasttwo{\csuse{multi@issue@last}}}/%
         \@pagerange
         \hfill
-        \copyright@symbol\hskip.33em\@copyrightyear\ \@publisher
+        \copyright@symbol\hskip.33em\@copyrightyear\ \@ifundefined{copyright@holder}{\@publisher}{\copyright@holder}%
         }}%
     }
 \if@leadarticle
@@ -985,9 +1059,21 @@
                 \hfill
                 \large \scshapepro \spaceskip=.295em%
                 volume \@tmp@romvol, no. \@issue,
-                \@ifundefined{month@item@\@pubmonth}%
-                     {???}%
-                     {\MakeLowercase{\csuse{month@item@\@pubmonth}}}
+                \@ifundefined{multi@pubmonth@last}%
+                    {%
+                        \@ifundefined{month@item@\@pubmonth}%
+                            {???}%
+                            {\MakeLowercase{\csuse{month@item@\@pubmonth}}}%
+                    }%
+                    {%
+                        \@ifundefined{month@item@\multi@pubmonth@first}%
+                            {???}%
+                            {\MakeLowercase{\csuse{month@item@\multi@pubmonth@first}}}%
+                        \multi@pubmonth@sep%
+                        \@ifundefined{month@item@\multi@pubmonth@last}%
+                            {???}%
+                            {\MakeLowercase{\csuse{month@item@\multi@pubmonth@last}}}%
+                    }\ 
                 \@pubyear
                 \hfill
                 }}%
@@ -1058,7 +1144,16 @@
     }
 \csuse{jphilart@hyperref}
 \setcounter{tocdepth}{3}
+\def\no@harm{%
+    \let~\space
+    \let\\=\@empty
+    \def\querymark##1##{\@gobble}%
+    \def\thanks##1##{\@gobble}%
+    \def\protect{\noexpand\protect\noexpand}%
+    }
 \gappto\pdfstringdefPreHook{%
     \def\thanks#1#{\@gobble}%
+    \def\querymark#1#{\@gobble}%
     }
+%
 \endinput
