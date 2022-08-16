@@ -19,7 +19,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}[2009/09/24]
 \ProvidesClass{jphilart}
-    [2020/01/12 v1.1 Typesetting articles for The Journal of Philosophy]
+    [2022/04/21 v1.1.6 Typesetting articles for The Journal of Philosophy]
 \ClassInfo{jphilart}{Copyright (c) 2020 Edgaras Sakuras and Lolita Tolene, 
     VTeX Ltd., Lithuania for JPHIL.}
 \@input{jphilart-vtex.cfg}
@@ -38,6 +38,9 @@
 \RequirePackage{ifpdf}
 \RequirePackage{graphicx}
 \csuse{jphilart@graphicx}
+\ifcsundef{jobstart@date@info}%
+    {\xdef\jobstart@date@info{\the\year\two@digits{\the\month}\two@digits{\the\day}}}%
+    {}%
 %%
 %%  ======= INFO =======
 %%
@@ -117,7 +120,10 @@
         }%
     }
 %%  Increasing the first article letter
-\RequirePackage{lettrine}
+\ifcsundef{jphilart@lettrine@pkg}%
+    {\def\jphilart@lettrine@pkg{lettrine}}%
+    {}%
+\RequirePackage\jphilart@lettrine@pkg
 \setcounter{DefaultLines}{3}
 \setlength{\DefaultNindent}{0pt}
 \setlength{\DefaultFindent}{0.2em}
@@ -345,10 +351,12 @@
 %%
 \def\frontmatter{%
     \parindent=\z@
+    \def\fnms##1{##1}%
+    \def\snm##1{##1}%
     \let\@fntextsuperscript\fm@fntextsuperscript
     \let\@@fntextsuperscript\fm@@fntextsuperscript
     \global\let\maketitle\relax
-    \def\thanks{\@latex@error{\noexpand\thanks outside \noexpand\title command argument}{}}%
+    \protected\def\thanks{\@latex@error{\noexpand\thanks outside \noexpand\title command argument}{}}%
     \ignorespaces
     }
 \def\endfrontmatter{%
@@ -417,7 +425,7 @@
 \newcounter{thanks}
 \def\thethanks{\@fnsymbol\c@thanks}
 \def\freefootnotetext[#1]{\begingroup\unrestored@protected@xdef\@thefnmark{#1}\endgroup\@footnotetext}
-\def\jphilart@thanks#1{%
+\protected\def\jphilart@thanks#1{%
     \stepcounter{thanks}%
     \def\thefootnote{\thethanks}%
     \footnotemark
@@ -939,7 +947,11 @@
 %%
 %%  ======= SETTINGS =======
 %%
-\brokenpenalty=10000
+\ifnum\jobstart@date@info>20220420\relax
+    \brokenpenalty=0
+\else
+    \brokenpenalty=10000
+\fi
 \clubpenalty=10000
 \widowpenalty=10000
 \def\header@size{\normalsize}
@@ -1133,14 +1145,17 @@
 \pagenumbering{arabic}
 \frenchspacing
 \pagestyle{headings}
-
-\RequirePackage{hyperref}
-\hypersetup{%
+% 
+\ifcsundef{jphilart@hyperref@pdfpagelabels@opt}%
+    {\def\jphilart@hyperref@pdfpagelabels@opt{pdfpagelabels}}%
+    {}%
+\expandafter\RequirePackage\expandafter[\jphilart@hyperref@pdfpagelabels@opt]{hyperref}
+\expandafter\hypersetup\expandafter{%
     bookmarks=true,%
     bookmarksopen=true,%
     hypertexnames=false,%
     pdfpagemode=UseOutlines,%
-    setpagesize=false
+    setpagesize=false%
     }
 \csuse{jphilart@hyperref}
 \setcounter{tocdepth}{3}
@@ -1156,4 +1171,102 @@
     \def\querymark#1#{\@gobble}%
     }
 %
+\csuse{jphilart@multi@footnotemark}
+\AtBeginDocument{%
+    \@ifpackageloaded{gb4e}%
+        {%
+            \def\exe{\@ifnextchar [{\@exe}{\@exe[]}}%
+            \def\@exe[#1]{%
+                \ifnum\@xnumdepth>0%
+                    \if@xrec
+                        \@exrecwarn
+                    \fi
+                    \if@noftnote
+                        \@exrecwarn
+                    \fi
+                    \@xnumdepth0%
+                    \@listdepth0%
+                    \@xrectrue
+                    \save@counters
+                \fi
+                \advance\@xnumdepth by \@ne
+                \@@xsi
+                \begin{list}%
+                    {(\thexnumi)}%
+                    {%
+                        \usecounter{xnumi}%
+                        \if@noftnote
+                            \setcounter{xnumi}{\value{exx}}%
+                        \else
+                            \setcounter{xnumi}{\value{fnx}}%
+                        \fi
+                        \ifx&#1&%
+                            \@subex{(\thexnumi)}{0.5em}%
+                        \else
+                            \@subex{#1}{0.5em}%
+                        \fi
+                    }%
+                }
+            \def\endexe{%
+                \if@noftnote
+                    \setcounter{exx}{\value{xnumi}}%
+                \else
+                    \setcounter{fnx}{\value{xnumi}}%
+                    \reset@counters
+                    \@xrecfalse
+                \fi
+                \end{list}%
+                }%
+            %
+            \def\xlist{\@ifnextchar [{\@xlist{}}{\@xlist{}[]}}%
+            \def\@xlist#1[#2]{%
+                \ifnum\@xnumdepth>3%
+                    \@toodeep
+                \else
+                    \advance\@xnumdepth by \@ne
+                    \edef\@xnumctr{xnum\romannumeral\the\@xnumdepth}%
+                    \def\@bla{#1}%
+                    \ifx\@bla\empty
+                        \xs@default{\romannumeral\the\@xnumdepth}%
+                    \else
+                        \expandafter\let\csname @xs\romannumeral\the\@xnumdepth\endcsname#1%
+                    \fi
+                    \begin{list}%
+                        {\csname the\@xnumctr\endcsname.}%
+                        {%
+                            \usecounter{\@xnumctr}%
+                            \@subex{#2}{0.25em}%
+                        }%
+                \fi
+                }%
+            \def\@subex#1#2{%
+                \if@noftnote
+                    \small
+                \else
+                    \footnotesize
+                \fi
+                \def\makelabel##1{{%
+                    ##1%
+                    \hfill
+                    }}%
+                \settowidth{\labelwidth}{#1}%
+                \labelsep#2%
+                \itemindent=\labelwidth
+                \advance\itemindent by \labelsep
+                \advance\itemindent by \parindent
+                \leftmargin=\the\itemindent
+                \itemindent=\z@
+                \ifnum\the\@xnumdepth=1\relax
+                    \topsep=7\p@ plus2\p@ minus3\p@
+                    \itemsep=3\p@ plus2\p@
+                \else
+                    \topsep=1.5\p@ plus\p@
+                    \itemsep=1.5\p@ plus\p@
+                \fi
+                \parsep=\p@ plus.5\p@ minus.5\p@
+                \rightmargin\parindent
+                }%
+        }%
+        {}%
+    }
 \endinput
