@@ -19,7 +19,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}[2009/09/24]
 \ProvidesClass{jphilart}
-    [2022/04/21 v1.1.6 Typesetting articles for The Journal of Philosophy]
+    [2022/08/16 v1.1.7 Typesetting articles for The Journal of Philosophy]
 \ClassInfo{jphilart}{Copyright (c) 2020 Edgaras Sakuras and Lolita Tolene, 
     VTeX Ltd., Lithuania for JPHIL.}
 \@input{jphilart-vtex.cfg}
