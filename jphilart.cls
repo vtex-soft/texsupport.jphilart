@@ -19,7 +19,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}[2009/09/24]
 \ProvidesClass{jphilart}
-    [2022/10/24 v1.1.8 Typesetting articles for The Journal of Philosophy]
+    [2022/11/25 v1.1.9 Typesetting articles for The Journal of Philosophy]
 \ClassInfo{jphilart}{Copyright (c) 2020 Edgaras Sakuras and Lolita Tolene, 
     VTeX Ltd., Lithuania for JPHIL.}
 \@input{jphilart-vtex.cfg}
@@ -968,17 +968,34 @@
 %%  ======= HEADER =======
 %%
 \def\ps@headings{%
+    \def\pseudo@head@line{%
+        {\header@size{\headernumber@size 000}\enspace{\scshapepro\MakeLowercase{\@runtitle}}%
+        \enspace{\headernumber@size 000}}%
+        }%
     \let\@oddfoot\@empty
     \let\@evenfoot\@empty
-    \def\@oddhead{{\header@size\hfill
+    \def\@oddhead{%
+        \csname check@head@line\endcsname%
+        {\header@size\hfill
         {\scshapepro\MakeLowercase{\@runtitle}}%
-    \hfill\llap{\headernumber@size\thepage}}}%
+        \hfill\llap{\headernumber@size\thepage}}}%
     \def\@evenhead{{\header@size\rlap{\headernumber@size\thepage}\hfill
         {\scshapepro\MakeLowercase{\@journal}}\hfill}}%
     \let\@mkboth\@gobbletwo
     \let\sectionmark\@gobble
     \let\subsectionmark\@gobble
     }
+
+\def\check@head@line{%
+    \bgroup
+        \settowidth\@tempdima{\pseudo@head@line}%
+        \ifdim\@tempdima>\textwidth\relax
+            \ClassError{jphilart}{Running title is too long!}{}%
+            \global\let\check@head@line\relax
+        \fi
+    \egroup
+    }
+
 % range 0-9999
 \def\two@digits@lasttwo#1{%
     \@tempcnta=#1
