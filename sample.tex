@@ -279,7 +279,37 @@ if applicable, the specified page or pages.
 
 Book references should include: the first and last name of author,
 publisher, U.S. city of publication, and date.}.
+To present bibliography from BIB files as notes you may follow
+these steps: 
+\begin{enumerate}
+  \item Add \verb+\bibliographystyle+ to TEX file, e.g.:\\
+    \verb+\bibliographystyle{apalike}+\\
+    \verb+\bibliography{refs}+
 
+  \item Compile file: \texttt{pdflatex foo.tex}
+
+  \item Generate BBL: \texttt{bibtex foo}
+
+  \item Add \verb+\nobibliography*+:\\
+    \verb+\usepackage{natbib}+\\
+    \verb+\usepackage{bibentry}+\\
+    \verb+\nobibliography*+
+
+  \item Edit paper using \verb+\bibentry+/\verb+\citeauthor+ macros
+
+  \item Compile file two times:\\
+    \texttt{pdflatex foo.tex}\\
+    \texttt{pdflatex foo.tex}
+
+  \item Please note:
+  \begin{itemize}
+    \item[--] BBL file must be saved in the same folder as TEX file
+    \item[--] To hide the complete list of bibliography at the end of the paper change:\\
+      \verb+\bibliography{refs}+\\
+    to\\
+      \verb+\nobibliography{refs}+
+  \end{itemize}
+\end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% You have reached the end of your document.                    %%
