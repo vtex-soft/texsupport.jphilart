@@ -22,6 +22,8 @@ The following files are given in the repository (or directly in `.zip` archive):
 -   Clone the repository or download the `.zip` archive;
 -   Install LaTeX style files (`jphilart.cls`) in your TeX system;
 -   Read the instructions (`sample.pdf`) for the preparation of your LaTeX document;
+-   The instructions for presenting bibliographical material as notes
+    also provided at the end of `sample.pdf` file;
 -   Use the template file `template.tex` to prepare your manuscript.
 
 ## Bug reports
