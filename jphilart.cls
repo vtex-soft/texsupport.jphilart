@@ -19,7 +19,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}[2009/09/24]
 \ProvidesClass{jphilart}
-    [2022/11/25 v1.1.9 Typesetting articles for The Journal of Philosophy]
+    [2023/12/23 v1.1.10 Typesetting articles for The Journal of Philosophy]
 \ClassInfo{jphilart}{Copyright (c) 2020 Edgaras Sakuras and Lolita Tolene, 
     VTeX Ltd., Lithuania for JPHIL.}
 \@input{jphilart-vtex.cfg}
@@ -433,19 +433,13 @@
         \protect\freefootnotetext[\thethanks]{#1}}%
 }
 \def\metadata@title{}
-\def\title@thankses{}%
 \def\title#1{%
     \gdef\metadata@title{#1}%
     \vspace*{\pretitle@skip}%% gives ~6.8mm
     \bgroup
+        \def\thanks##1{\NoCaseChange{\jphilart@thanks{##1}}}%
         \title@style
-        \def\thanks##1{%
-            \NoCaseChange{%
-                \protected@write\@auxout{}{\string\gappto\string\title@thankses{\detokenize{\jphilart@thanks{##1}}}}%
-                }%
-            }%
         \MakeUppercase{#1}%
-        \title@thankses
         \par
     \egroup
     \vspace*{\posttitle@skip}%% gives ~6.3mm
