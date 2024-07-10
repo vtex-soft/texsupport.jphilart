@@ -24,7 +24,7 @@
 %% The following items will be set by the Managing Editor.       %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\pubyear{2023}
+\pubyear{2024}
 \pubmonth{0}
 \volume{0}
 \issue{0}
@@ -100,8 +100,8 @@ a commented sample file called \texttt{sample.tex}. You are probably
 reading the PDF version of this sample file, compiled with a pdflatex
 engine.
 
-{Papers using the \LaTeX\ class \jphilart are quicker published}.
-The \textit{Journal of Philosophy} need a standardized layout for all
+{Papers using the \LaTeX\ class \jphilart are published faster}.
+The \textit{Journal of Philosophy} needs a standardized layout for all
 papers. For that reason, you are strongly encouraged to use the \LaTeX\
 class \jphilart for your papers.
 
@@ -113,8 +113,8 @@ class \jphilart for your papers.
     in the latex file.}
 
 You need a copy of the \texttt{jphilart.cls} file in your directory%
-\footnote{Or in any location scanned for \texttt{cls} files by your
-latex engine.} in order to compile documents based on the \jphilart
+\footnote{Or stored in any location that is scanned for \texttt{cls} files by your
+\LaTeX\ engine.} in order to compile documents based on the \jphilart
 class, such as \texttt{sample.tex}.
 
 The \jphilart document class loads automatically the following packages:
@@ -134,20 +134,20 @@ such as \verb+\title+, \verb+\author+, etc.
 \section{Fonts}
 
 The default font used by the \jphilart class is \emph{NewBaskerville},
-i.e. it is checked if \texttt{t1pnb.fd} file exists in \LaTeX\ system.
-If it's not \emph{Baskervaldx} package is used as alternative.
+i.e. it is checked if \texttt{t1pnb.fd} file exists in the \LaTeX\ system.
+If it does not, then the \emph{Baskervaldx} package is used as alternative.
 
-\emph{Latin Modern Sans} and \emph{Latin Modern Mono} is used for
+\emph{Latin Modern Sans} and \emph{Latin Modern Mono} are used for
 \textsf{sans serif} and \texttt{typewriter} fonts.\vfill\eject
 
 New font shape macro \verb+\textscit+ is introduced for \emph{italic}+\textsc{small caps} shape.
 
 The first letter of the article is typeset larger than the rest of the text.
-\jphilart class loads the \texttt{lettrine} package for this purpose.
+The \jphilart class loads the \texttt{lettrine} package for this purpose.
 
 \section{Section headings}
 
-In \jphilart class section titles starting with \verb+\subsection+ are formatted as a
+In the \jphilart class, section titles starting with \verb+\subsection+ are formatted as a
 run-in title, like the standard \verb+\paragraph+. Also at the end of these
 titles punctuation will be automatically inserted if missing.
 
@@ -181,7 +181,7 @@ Here is another numbered displayed equation
 \begin{split}
 &d(\neg\phi) = d(\phi);\\
 &d(\phi\wedge\psi) = d(\phi)\odot d(\psi);\\
-&d(\phi\vee\psi) = d(\phi)\odot d(\psi);
+&d(\phi\vee\psi) = d(\phi)\oplus d(\psi);
 \end{split}
 \end{equation}
 
@@ -280,7 +280,7 @@ if applicable, the specified page or pages.
 Book references should include: the first and last name of author,
 publisher, U.S. city of publication, and date.}.
 To present bibliography from BIB files as notes you may follow
-these steps: 
+these steps:
 \begin{enumerate}
   \item Add \verb+\bibliographystyle+ to TEX file, e.g.:\\
     \verb+\bibliographystyle{apalike}+\\
