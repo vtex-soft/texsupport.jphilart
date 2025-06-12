@@ -19,7 +19,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}[2009/09/24]
 \ProvidesClass{jphilart}
-    [2023/12/23 v1.1.10 Typesetting articles for The Journal of Philosophy]
+    [2025/06/11 v1.2.0 Typesetting articles for The Journal of Philosophy]
 \ClassInfo{jphilart}{Copyright (c) 2020 Edgaras Sakuras and Lolita Tolene, 
     VTeX Ltd., Lithuania for JPHIL.}
 \@input{jphilart-vtex.cfg}
@@ -294,16 +294,26 @@
 
 \def\multi@pubmonth@sep{/}
 
-\def\pubmonth#1{\get@and@set@multi@value{pubmonth}{#1}}
+\def\pubmonth#1{%
+    \get@and@set@multi@value{pubmonth}{#1}%
+    \gdef\@pubmonth@present{1}%
+    }
 \def\@pubmonth{0}
+\def\@pubmonth@present{0}
 
 \def\volume#1{\gdef\@volume{#1}}
 \gdef\@volume{0}
 
 \def\multi@issue@sep{/}
 
-\def\issue#1{\get@and@set@multi@value{issue}{#1}}
+\def\issue#1{%
+    \get@and@set@multi@value{issue}{#1}%
+    \ifnum\multi@issue@first>\z@
+        \gdef\@issue@present{1}%
+    \fi
+    }
 \gdef\@issue{0}
+\def\@issue@present{0}
 
 \newcounter{firstpage}
 \newcounter{lastpage}
@@ -476,14 +486,20 @@
 
 \if@leadarticle
     \def\pretitle@skip{83.2\p@}
-    \def\posttitle@skip{2\p@}
+    \def\posttitle@skip{5\p@}
     \def\presubtitle@skip{3.9\p@}
     \def\postsubtitle@skip{3.5\p@}
+    \def\copyright@raise@pagenum{28.6\p@}
+    \def\earlypublication@lines@lower{0}
+    \def\earlypublication@lines@shrink{0}
+    \def\earlypublication@raise@date{97\p@}
 \else
-    \def\pretitle@skip{-12\p@}
-    \def\posttitle@skip{3.5\p@}
+    \def\pretitle@skip{-3\p@}
+    \def\posttitle@skip{5.5\p@}
     \def\presubtitle@skip{2.4\p@}
     \def\postsubtitle@skip{3.5\p@}
+    \def\earlypublication@raise@journal{13\p@}
+    \def\earlypublication@raise@date{0\p@}
 \fi
 \def\title@style{\centering}
 %%
@@ -947,11 +963,7 @@
 %%
 %%  ======= SETTINGS =======
 %%
-\ifnum\jobstart@date@info>20220420\relax
-    \brokenpenalty=0
-\else
-    \brokenpenalty=10000
-\fi
+\brokenpenalty=0
 \clubpenalty=10000
 \widowpenalty=10000
 \def\header@size{\normalsize}
@@ -1019,23 +1031,84 @@
 \@onlypreamble\copyrightholder
 \def\copyright@text{%
     \raisebox{15mm}[\z@][\z@]{\hb@xt@\textwidth{\copyright@size
-        \@issn/\two@digits@lasttwo\@pubyear/%
+        \@issn\@earlypublication@gobble{/\two@digits@lasttwo\@pubyear/%
         \two@digits@lasttwo\@volume%
         \@ifundefined{multi@issue@last}
             {\two@digits@lasttwo{\@issue}}
             {\two@digits@lasttwo{\csuse{multi@issue@first}}-\two@digits@lasttwo{\csuse{multi@issue@last}}}/%
-        \@pagerange
+        \@pagerange}
         \hfill
-        \copyright@symbol\hskip.33em\@copyrightyear\ \@ifundefined{copyright@holder}{\@publisher}{\copyright@holder}%
+        \copyright@symbol\hskip.33em\@earlypublication@gobble{\@copyrightyear\ }\@ifundefined{copyright@holder}{\@publisher}{\copyright@holder}%
         }}%
     }
+%
+\def\@doi{}
+\def\doi@base{https://doi.org/}
+\def\the@doi{}
+\def\doi#1{%
+    \gdef\@doi{#1}%
+    \protected\def\the@doi{\href{\doi@base\@doi}{\doi@base\@doi}}%
+    \AtBeginDocument{%
+        \ifnum\doc@stage>299\relax
+            \def\copyright@raise@pagenum{20\p@}%
+        \fi
+        }%
+    }
+\def\doi@CRConly{}
+\def\@doi@CRConly{%
+    \rlap{\raisebox{11.5mm}[\z@][\z@]{\hb@xt@\textwidth{\copyright@size\the@doi\hfill}}}%
+    }
+\ifdefined\CRC
+    \g@addto@macro\CRC{\let\doi@CRConly\@doi@CRConly}
+\fi
+%
+\def\smonth#1{%
+    \@ifundefined{month@item@#1}%
+        {\@latex@error{there is no month with number '#1'}{??}}%
+        {\getitemvalue{month}{#1}}%
+    }%
+\def\sday#1{#1}
+\def\syear#1{#1}
+\def\@earlypublication@text{Online First: }
+\def\@earlypublication{}
+\def\@earlypublication@gobble{}
+\def\@earlypublication@activate{\@gobble}
+\def\earlypublication#1{%
+    \gdef\@earlypublication@date{#1}%
+    \AtBeginDocument{%
+        \ifnum\@volume=\z@
+            \gdef\@earlypublication@activate{}%
+        \fi
+        \ifnum\@issue@present=\z@
+            \gdef\@earlypublication@activate{}%
+        \fi
+        \@earlypublication@activate{%
+            \ifnum\doc@stage>299\relax
+                \gdef\@earlypublication{%
+                    \header@size
+                    \if@leadarticle
+                    \else
+                        \rlap{\raisebox{\earlypublication@raise@journal}[\z@][\z@]{\hb@xt@\textwidth{\fontsize{10bp}{10bp}\selectfont\scshapepro\spaceskip=.343em\addfontfeature{LetterSpace=3}{THE JOURNAL OF PHILOSOPHY}\hfill}}}%
+                    \fi
+                    \rlap{\raisebox{\earlypublication@raise@date}[\z@][\z@]{\hb@xt@\textwidth{\@earlypublication@text\@earlypublication@date\hfill}}}%
+                    }%
+                \gdef\earlypublication@lines@lower{-1500}%
+                \gdef\earlypublication@lines@shrink{-1300}%
+                \gdef\@earlypublication@gobble{\@gobble}%
+            \fi
+            }%
+        }%
+    }
+%
 \if@leadarticle
 \def\ps@copyright{%
     \def\@oddfoot{%
-        \rlap{\raisebox{28.6\p@}[\z@][\z@]{\hb@xt@\textwidth{\hfill\normalsize\thepage\hfill}}}%
-        \copyright@text}%
+            \doi@CRConly\rlap{\raisebox{\copyright@raise@pagenum}[\z@][\z@]{\hb@xt@\textwidth{\hfill\normalsize\thepage\hfill}}}%
+            \copyright@text
+        }%
     \let\@evenfoot\@oddfoot
     \def\@oddhead{{%
+        \@earlypublication
         \setlength{\unitlength}{0.01bp}%
         \begin{picture}(29880,9760)%
             \newsavebox{\jphilart@lead@thick@rule}%
@@ -1045,8 +1118,8 @@
                 }%
             \put(0,0){\usebox{\jphilart@lead@thick@rule}}%
             \put(16759,0){\usebox{\jphilart@lead@thick@rule}}%
-            \put(0,9159){\usebox{\jphilart@lead@thick@rule}}%
-            \put(16759,9159){\usebox{\jphilart@lead@thick@rule}}%
+            \put(0,\numexpr\earlypublication@lines@lower+9159\relax){\usebox{\jphilart@lead@thick@rule}}%
+            \put(16759,\numexpr\earlypublication@lines@lower+9159\relax){\usebox{\jphilart@lead@thick@rule}}%
             \newsavebox{\jphilart@lead@thin@rule}%
             \savebox{\jphilart@lead@thin@rule}(13160,50)[bl]{%
                 \linethickness{0.5bp}%
@@ -1054,12 +1127,12 @@
                 }%
             \put(0,640){\usebox{\jphilart@lead@thin@rule}}%
             \put(16759,640){\usebox{\jphilart@lead@thin@rule}}%
-            \put(0,8767){\usebox{\jphilart@lead@thin@rule}}%
-            \put(16759,8767){\usebox{\jphilart@lead@thin@rule}}%
+            \put(0,\numexpr\earlypublication@lines@lower+8767\relax){\usebox{\jphilart@lead@thin@rule}}%
+            \put(16759,\numexpr\earlypublication@lines@lower+8767\relax){\usebox{\jphilart@lead@thin@rule}}%
             \newsavebox{\jphilart@lead@circle}%
             \savebox{\jphilart@lead@circle}(400,400)[bl]{\put(0,0){\circle*{400}}}%
             \put(14960,490){\usebox{\jphilart@lead@circle}}%
-            \put(14960,8960){\usebox{\jphilart@lead@circle}}%
+            \put(14960,\numexpr\earlypublication@lines@lower+8960\relax){\usebox{\jphilart@lead@circle}}%
             \newsavebox{\jphilart@lead@left@cross}%
             \savebox{\jphilart@lead@left@cross}(788,404)[bl]{%
                 \linethickness{0.65bp}%
@@ -1067,7 +1140,7 @@
                 \put(200,0){\line(0,1){404}}%
                 }%
             \put(13470,285){\usebox{\jphilart@lead@left@cross}}%
-            \put(13470,8760){\usebox{\jphilart@lead@left@cross}}%
+            \put(13470,\numexpr\earlypublication@lines@lower+8760\relax){\usebox{\jphilart@lead@left@cross}}%
             \newsavebox{\jphilart@lead@right@cross}%
             \savebox{\jphilart@lead@right@cross}(788,404)[bl]{%
                 \linethickness{0.65bp}%
@@ -1075,15 +1148,21 @@
                 \put(588,0){\line(0,1){404}}%
                 }%
             \put(15660,285){\usebox{\jphilart@lead@right@cross}}%
-            \put(15660,8760){\usebox{\jphilart@lead@right@cross}}%
+            \put(15660,\numexpr\earlypublication@lines@lower+8760\relax){\usebox{\jphilart@lead@right@cross}}%
             \newsavebox{\jphilart@lead@thin@hrule}%
             \savebox{\jphilart@lead@thin@hrule}(29880,50)[bl]{%
                 \linethickness{0.5bp}%
                 \put(0,0){\line(1,0){29880}}%
                 }
             \put(0,1840){\usebox{\jphilart@lead@thin@hrule}}%
-            \put(0,7570){\usebox{\jphilart@lead@thin@hrule}}%
-            \put(0,2990){\hb@xt@\textwidth{%
+            \put(0,\numexpr\earlypublication@lines@lower+7570\relax){\usebox{\jphilart@lead@thin@hrule}}%
+            \@earlypublication@gobble{%
+                \ifnum\@pubmonth@present=\@ne\else
+                    \let\@pubmonth\@issue
+                    \let\multi@pubmonth@first\multi@issue@first
+                    \let\multi@pubmonth@last\multi@issue@last
+                \fi
+                \put(0,2990){\hb@xt@\textwidth{%
                 \edef\@tmp@romvol{\romannumeral\@volume}%
                 \hfill
                 \large \scshapepro \spaceskip=.295em%
@@ -1105,8 +1184,8 @@
                     }\ 
                 \@pubyear
                 \hfill
-                }}%
-            \put(0,4785){\hb@xt@\textwidth{%
+                }}}%
+            \put(0,\numexpr\earlypublication@lines@shrink+4785\relax){\hb@xt@\textwidth{%
                 \hfill
                 \fontsize{13.9bp}{13.9bp}\selectfont
                 \scshapepro \spaceskip=.443em\addfontfeature{LetterSpace=4}%
@@ -1122,10 +1201,12 @@
 }
 \else
 \def\ps@copyright{%
-    \def\@oddfoot{\copyright@text}%
+    \def\@oddfoot{%
+        \doi@CRConly\copyright@text
+        }%
     \let\@evenfoot\@oddfoot
-    \def\@oddhead{{\header@size\hfill
-        {\scshapepro\MakeLowercase{\@runtitle}}%
+    \def\@oddhead{{\header@size\@earlypublication\hfill
+        \@earlypublication@gobble{\scshapepro\MakeLowercase{\@runtitle}}%
         \hfill\llap{\headernumber@size\thepage}}}%
     \def\@evenhead{{\header@size\rlap{\headernumber@size\thepage}\hfill
         {\scshapepro\MakeLowercase{\@journal}}\hfill}}%
@@ -1163,11 +1244,22 @@
 \frenchspacing
 \pagestyle{headings}
 % 
-\ifcsundef{jphilart@hyperref@pdfpagelabels@opt}%
-    {\def\jphilart@hyperref@pdfpagelabels@opt{pdfpagelabels}}%
+\ifnum\jobstart@date@info>20250611
+    \PassOptionsToPackage{hyphens}{url}
+    \def\jphilart@hyperref@setup@opts{%
+        allcolors=blue,%
+        pdfborder={0 0 0},%
+        }
+\else
+    \let\jphilart@hyperref@setup@opts\@empty
+\fi
+\ifcsundef{jphilart@hyperref@pkg@opts}%
+    {\def\jphilart@hyperref@pkg@opts{pdfpagelabels,breaklinks,colorlinks}}%
     {}%
-\expandafter\RequirePackage\expandafter[\jphilart@hyperref@pdfpagelabels@opt]{hyperref}
+    {}%
+\expandafter\RequirePackage\expandafter[\jphilart@hyperref@pkg@opts]{hyperref}
 \expandafter\hypersetup\expandafter{%
+    \jphilart@hyperref@setup@opts%
     bookmarks=true,%
     bookmarksopen=true,%
     hypertexnames=false,%
