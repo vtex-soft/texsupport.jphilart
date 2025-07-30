@@ -19,9 +19,11 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}[2009/09/24]
 \ProvidesClass{jphilart}
-    [2025/06/11 v1.2.0 Typesetting articles for The Journal of Philosophy]
+    [2025/06/17 v1.4.0 Typesetting articles for The Journal of Philosophy]
 \ClassInfo{jphilart}{Copyright (c) 2020 Edgaras Sakuras and Lolita Tolene, 
     VTeX Ltd., Lithuania for JPHIL.}
+\let\leadpicture\picture
+\let\endleadpicture\endpicture
 \@input{jphilart-vtex.cfg}
 \newif\if@leadarticle \@leadarticlefalse
 \DeclareOption{leadarticle}{\@leadarticletrue}
@@ -53,40 +55,43 @@
 %%
 \csuse{jphilart@itcnbpro@addons}
 \usepackage[T1]{fontenc}
-\IfFileExists{t1pnb.fd}
-    {
-        \renewcommand{\rmdefault}{pnb}
-        \xdef\jphilart@newbaskerville@alternative{0}
-    }
-    {
-        \IfFileExists{Baskervaldx.sty}
-            {
-                \RequirePackage{Baskervaldx}
-                \xdef\jphilart@newbaskerville@alternative{1}
-            }
-            {
-                \ClassWarning{jphilart}{package Baskervaldx not found, using baskervald [and qtm for sc(it)] instead}
-                \RequirePackage{baskervald}
-                \xdef\jphilart@newbaskerville@alternative{2}
-            }
+\IfFileExists{t1pnb.fd}%
+    {%
+        \renewcommand{\rmdefault}{pnb}%
+        \xdef\jphilart@newbaskerville@alternative{0}%
+    }%
+    {%
+        \IfFileExists{Baskervaldx.sty}%
+            {%
+                \RequirePackage{Baskervaldx}%
+                \xdef\jphilart@newbaskerville@alternative{1}%
+            }%
+            {%
+                \ClassWarning{jphilart}{package Baskervaldx not found, 
+                    using baskervald [and qtm for sc(it)] instead}%
+                \RequirePackage{baskervald}%
+                \xdef\jphilart@newbaskerville@alternative{2}%
+            }%
     }
 \ifcsundef{scitdefault}
     {\def\scitdefault{scit}}
     {}
-\ifcsundef{scitshape}
-    {
-        \DeclareRobustCommand\scitshape{\not@math@alphabet\scitshape\relax
-            \fontshape\scitdefault\selectfont}
-    }
+\ifcsundef{scitshape}%
+    {%
+        \DeclareRobustCommand\scitshape{%
+            \not@math@alphabet\scitshape\relax
+            \fontshape\scitdefault\selectfont
+            }%
+    }%
     {}
-\ifcsundef{textscit}
-    {\DeclareTextFontCommand{\textscit}{\scitshape}}
+\ifcsundef{textscit}%
+    {\DeclareTextFontCommand{\textscit}{\scitshape}}%
     {}
-\ifcsundef{scshapepro}
-    {\let\scshapepro\scshape}
+\ifcsundef{scshapepro}%
+    {\let\scshapepro\scshape}%
     {\DeclareTextFontCommand{\textsc}{\scshapepro}}
-\ifcsundef{addfontfeature}
-    {\let\addfontfeature\@gobble}
+\ifcsundef{addfontfeature}%
+    {\let\addfontfeature\@gobble}%
     {}
 \renewcommand{\sfdefault}{lmss}
 \renewcommand{\ttdefault}{lmtt}
@@ -132,7 +137,7 @@
     {\LettrineRealHeightfalse}
 \def\LettrineTextFont{\normalfont}
 \def\LettrineSecondString{l}
-
+% 
 %%  Math fonts
 %  Set operators fonts with New Baskerville:
 \DeclareSymbolFont{baskervaldxoperators}{T1}{\rmdefault}{m}{n}
@@ -215,7 +220,7 @@
 \DeclareMathSymbol{7}{\mathalpha}{baskervaldxoperators}{`7}
 \DeclareMathSymbol{8}{\mathalpha}{baskervaldxoperators}{`8}
 \DeclareMathSymbol{9}{\mathalpha}{baskervaldxoperators}{`9}
-
+% 
 %%  Settings for paragraph breaking
 \pretolerance=100
 \tolerance=800
@@ -251,21 +256,24 @@
 %%
 % macros for custom numeration system
 \def\setvaluelist#1#2{%
-  \@tempcnta=0\relax
-  \expandafter\protected@xdef\csname #1@item@0\endcsname{\the\@tempcnta}%
-  \@for\@curr@val:=#2\do{%
-     \advance\@tempcnta by1\relax
-     \expandafter\protected@xdef\csname #1@item@\the\@tempcnta\endcsname{\@curr@val}%
-     }%
-}
+    \@tempcnta=0\relax
+    \expandafter\protected@xdef\csname #1@item@0\endcsname{\the\@tempcnta}%
+    \@for\@curr@val:=#2\do{%
+        \advance\@tempcnta by1\relax
+        \expandafter\protected@xdef\csname #1@item@\the\@tempcnta\endcsname{\@curr@val}%
+        }%
+    }
 \xdef\getitemvalue#1#2{\noexpand\csname #1@item@#2\endcsname}
-
+% 
 \def\pubyear#1{\gdef\@pubyear{#1}\gdef\@copyrightyear{#1}}
 \def\@pubyear{0}
 \def\@copyrightyear{0}
-
-\setvaluelist{month}{January,February,March,April,May,June,July,August,September,October,November,December}
-
+% 
+\setvaluelist{month}{%
+    January,February,March,April,May,June,%
+    July,August,September,October,November,December%
+    }
+% 
 % get multi value separated by comma
 % currently used for issue and pubmonth
 \def\get@and@set@multi@value#1#2{%
@@ -280,7 +288,8 @@
                 \csxdef{multi@#1@last}{##1}%
                 \ifnum\temp@multi@prev<\csuse{multi@#1@last}%
                 \else
-                    \@latex@error{wrong order of #1 numbers: current value \csuse{multi@#1@last} is equal or 
+                    \@latex@error{wrong order of #1 numbers: 
+                        current value \csuse{multi@#1@last} is equal or 
                         less than previous \temp@multi@prev}{}%
                 \fi
             }%
@@ -291,21 +300,21 @@
         {\csxdef{@#1}{\csuse{multi@#1@first}}}%
         {\csxdef{@#1}{\csuse{multi@#1@first}\csuse{multi@#1@sep}\csuse{multi@#1@last}}}%
     }
-
+% 
 \def\multi@pubmonth@sep{/}
-
+% 
 \def\pubmonth#1{%
     \get@and@set@multi@value{pubmonth}{#1}%
     \gdef\@pubmonth@present{1}%
     }
 \def\@pubmonth{0}
 \def\@pubmonth@present{0}
-
+% 
 \def\volume#1{\gdef\@volume{#1}}
 \gdef\@volume{0}
-
+% 
 \def\multi@issue@sep{/}
-
+% 
 \def\issue#1{%
     \get@and@set@multi@value{issue}{#1}%
     \ifnum\multi@issue@first>\z@
@@ -314,7 +323,7 @@
     }
 \gdef\@issue{0}
 \def\@issue@present{0}
-
+% 
 \newcounter{firstpage}
 \newcounter{lastpage}
 \def\firstpage#1{%
@@ -337,23 +346,24 @@
     }
 \def\pagerange@sep{--}
 \def\set@pagerange{%
-  \ifnum\c@firstpage=0%
-  \else%
-     \ifnum\c@firstpage=\c@lastpage%
-        \gdef\@pagerange{\thefirstpage}%
-     \else%
-        \gdef\@pagerange{\thefirstpage\pagerange@sep\thelastpage}%
-     \fi%
-   \fi}
+    \ifnum\c@firstpage=0%
+    \else
+        \ifnum\c@firstpage=\c@lastpage
+            \gdef\@pagerange{\thefirstpage}%
+        \else
+            \gdef\@pagerange{\thefirstpage\pagerange@sep\thelastpage}%
+        \fi
+    \fi
+    }
 \def\@pagerange{0}
-
+% 
 \def\pagenumbering#1{%
     \gdef\thefirstpage{\csname @#1\endcsname\c@firstpage}%
     \gdef\thelastpage{\csname @#1\endcsname\c@lastpage}%
     \gdef\thepage{\csname @#1\endcsname\c@page}%
     }
 \csuse{jphilart@checklpage}
-
+% 
 \def\startlocaldefs{\makeatletter}
 \def\endlocaldefs{\makeatother}
 %%
@@ -366,12 +376,14 @@
     \let\@fntextsuperscript\fm@fntextsuperscript
     \let\@@fntextsuperscript\fm@@fntextsuperscript
     \global\let\maketitle\relax
-    \protected\def\thanks{\@latex@error{\noexpand\thanks outside \noexpand\title command argument}{}}%
+    \protected\def\thanks{%
+        \@latex@error{\noexpand\thanks outside \noexpand\title command argument}{}%
+        }%
     \ignorespaces
     }
 \def\endfrontmatter{%
     \ignorespacesafterend
-    \global\@topnum\z@  % Prevents figures from going at top of page.
+    \global\@topnum=\z@% Prevents figures from going at top of page.
     \set@pagerange
     \thispagestyle{copyright}%
     \enlargethispage{-35\p@}%
@@ -396,7 +408,7 @@
     \egroup
     \aftergroup\frontmatter@cmd
     }
-
+% 
 \def\frontmatter@cmd{\@afterindentfalse\@afterheading}
 %%
 %%  ======= FOOTNOTES =======
@@ -409,14 +421,14 @@
         \kern-16\p@ \hrule \@height .5\p@\kern15.5\p@
     \fi
     \xdef\split@prev@footnote{\the\insertpenalties}%
-  }%
+    }
 \setlength{\skip\footins}{24\p@ \@plus 8\p@ \@minus 4\p@}
 \def\@fntextsuperscript#1{{\m@th\raisebox{.95ex}[\z@][\z@]{\mbox{\fontsize{.6em}\z@#1}}}}
 \def\fm@fntextsuperscript#1{{\m@th\raisebox{.52ex}[\z@][\z@]{\mbox{#1}}}}
 \def\@@fntextsuperscript#1{{\m@th\raisebox{.9ex}[\z@][\z@]{\mbox{\fontsize{.6125em}\z@#1}}}}
 \def\fm@@fntextsuperscript#1{{\m@th\raisebox{.52ex}[\z@][\z@]{\mbox{#1}}}}
 \def\@makefnmark{\mbox{\@fntextsuperscript{\normalfont\@thefnmark}}}
-\def\@makefntextmark{\mbox{\@@fntextsuperscript{\normalfont\@thefnmark}}}
+\def\@makefntextmark{\mbox{\csname tagpdf@fntextmark@start\endcsname \@@fntextsuperscript{\normalfont\@thefnmark}}}
 \renewcommand\@makefntext[1]{%
     \parindent=10\p@
     \csuse{jphil@footnote@hook}%
@@ -434,14 +446,17 @@
 %%
 \newcounter{thanks}
 \def\thethanks{\@fnsymbol\c@thanks}
-\def\freefootnotetext[#1]{\begingroup\unrestored@protected@xdef\@thefnmark{#1}\endgroup\@footnotetext}
+\def\freefootnotetext[#1]{%
+    \begingroup\unrestored@protected@xdef\@thefnmark{#1}\endgroup
+    \@footnotetext
+    }
 \protected\def\jphilart@thanks#1{%
     \stepcounter{thanks}%
     \def\thefootnote{\thethanks}%
     \footnotemark
     \protected@xdef\@thanks{\@thanks
         \protect\freefootnotetext[\thethanks]{#1}}%
-}
+    }
 \def\metadata@title{}
 \def\title#1{%
     \gdef\metadata@title{#1}%
@@ -449,7 +464,9 @@
     \bgroup
         \def\thanks##1{\NoCaseChange{\jphilart@thanks{##1}}}%
         \title@style
+        \csname tagpdf@title@start\endcsname
         \MakeUppercase{#1}%
+        \csname tagpdf@title@stop\endcsname
         \par
     \egroup
     \vspace*{\posttitle@skip}%% gives ~6.3mm
@@ -481,9 +498,9 @@
         \MakeUppercase{#1}%
         \par
     \egroup
-    \vspace*{\postsubtitle@skip}
+    \vspace*{\postsubtitle@skip}%
     }
-
+% 
 \if@leadarticle
     \def\pretitle@skip{83.2\p@}
     \def\posttitle@skip{5\p@}
@@ -506,7 +523,7 @@
 %%  ======= AUTHOR GROUP =======
 %%
 \def\smart@par{\ifhmode\par\fi}
-
+% 
 \newcounter{jphil@aug}
 \newenvironment{aug}%
     {%
@@ -523,14 +540,14 @@
         \setcounter{jphil@address}{0}%
         \smart@par
     }
-
+% 
 %  Print author and address by number: \printaddressnum{1}
 \def\printauthornum#1{%
     \xdef\@tmp{#1}%
     \bgroup
         \@ifundefined{@jphil@author@#1}%
             {%
-                 \@latex@error{Error: there is no author with number '#1'!}{??}%
+                \@latex@error{Error: there is no author with number '#1'!}{??}%
             }{%
                 \scshapepro
                 \MakeLowercase{%
@@ -544,13 +561,13 @@
     \bgroup
         \@ifundefined{@jphil@address@#1}%
             {%
-                 \@latex@error{Error: there is no address with number '#1'!}{??}%
+                \@latex@error{Error: there is no address with number '#1'!}{??}%
             }{%
-                 \expandafter\expandafter\expandafter\the\csname @jphil@address@\@tmp\endcsname
+                \expandafter\expandafter\expandafter\the\csname @jphil@address@\@tmp\endcsname
             }%
     \egroup
     }
-
+% 
 \def\format@single@aug@addresses{%
     \@tempcnta=0%
     \bgroup
@@ -571,7 +588,7 @@
             }%
     \egroup
     }
-
+% 
 \def\printaddresses{%
     \smart@par
     \if@noaug
@@ -592,7 +609,7 @@
 \newcounter{jphil@author}
 \def\author{\@ifnextchar[{\author@fmt}{\author@fmt[]}}
 \def\metadata@authors{}
-
+% 
 \def\author@fmt[#1]#2{%
     \stepcounter{jphil@author}%
     \ifnum\c@jphil@author>\@ne
@@ -609,7 +626,7 @@
 %%
 \newcounter{jphil@address}
 \def\address{\@ifnextchar[{\address@fmt}{\address@fmt[default]}}
-
+% 
 \def\address@fmt[#1]#2{%
     \stepcounter{jphil@address}%
     \expandafter\protected@xdef\csname jphil@address@ref@#1\endcsname{\the\c@jphil@address}%
@@ -648,7 +665,7 @@
 \def\@addpunct#1{%
     \relax
     \ifhmode
-        \ifnum\spacefactor>\@m%
+        \ifnum\spacefactor>\@m
         \else
             #1%
         \fi
@@ -664,10 +681,10 @@
     }
 %%  Mandatory punctuation after section counter
 \renewcommand{\@seccntformat}[1]{\csname the#1\endcsname.\space}
-
+% 
 \def\thesection{\Roman{section}}
 \def\thesection@for@ref{{\scshapepro\roman{section}}}
-
+% 
 %% Subsections etc. must be indented
 \newif\if@subsection@@indent
 \def\check@if@after@section{%
@@ -689,22 +706,24 @@
     -\fontdimen2\font \@plus -\fontdimen3\font \@minus -\fontdimen4\font
     \check@if@after@section
     }
-
+% 
 %%  First section level
 %%  A negative value in the 4th argument to \@startsection means that first paragraph after the heading will not be indented,
 %%  and the absolute value of the length is inserted before the heading
 \def\section@prefix{}
 \def\section@style{\normalfont\normalsize\scshapepro\MakeLowercase}
+
 \newcommand\jphil@section{%
     \@startsection{section}%
-                  {1}%
-                  {\z@}%
-                  {-0.67\baselineskip \@plus-.1ex \@minus -.2ex}%
-                  {0.25\baselineskip \@plus.2ex}%
-                  {\centering\section@prefix\section@style}%
+        {1}%
+        {\z@}%
+        {-0.67\baselineskip \@plus-.1ex \@minus -.2ex}%
+        {0.25\baselineskip \@plus.2ex}%
+        {\centering\section@prefix\section@style
+        }%
     }
-\let\section\jphil@section                                      
-
+\let\section\jphil@section
+% 
 %%  Formatting the appendix section 
 \newif\ifappendix@star@ 
 \def\jphil@appsectionstar{\global\appendix@star@true\jphil@section}
@@ -715,15 +734,15 @@
     \let\section\jphil@appsection
     \def\thesection@for@ref{{\scshapepro\@alph\c@section}}%
     }
-
+% 
 %%  Second etc. section levels
 \renewcommand\subsection{%
     \@startsection{subsection}%
-                  {2}%
-                  {\z@}
-                  {\z@}%
-                  {\hspace@after@section}%
-                  {\@subsection@indent\raggedright\normalfont\normalsize\itshape}%
+        {2}%
+        {\z@}%
+        {\z@}%
+        {\hspace@after@section}%
+        {\@subsection@indent\raggedright\normalfont\normalsize\itshape}%
     }
 \let\article@subsection\subsection
 \def\subsection{\secdef{\article@asubsection}{\article@bsubsection}}
@@ -731,11 +750,11 @@
 \def\article@bsubsection#1{\article@subsection*{#1\@addpunct{.}}}
 \renewcommand\subsubsection{%
     \@startsection{subsubsection}%
-                  {3}%
-                  {\z@}%
-                  {\z@}%
-                  {\hspace@after@section}%
-                  {\@subsection@indent\normalfont\normalsize\itshape}%
+        {3}%
+        {\z@}%
+        {\z@}%
+        {\hspace@after@section}%
+        {\@subsection@indent\normalfont\normalsize\itshape}%
     }
 \let\article@subsubsection\subsubsection
 \def\subsubsection{\secdef{\article@asubsubsection}{\article@bsubsubsection}}
@@ -743,11 +762,11 @@
 \def\article@bsubsubsection#1{\article@subsubsection*{#1\@addpunct{.}}}
 \renewcommand\paragraph{%
     \@startsection{paragraph}%
-                  {4}%
-                  {\z@}%
-                  {\z@}%
-                  {\hspace@after@section}%
-                  {\@subsection@indent\normalfont\normalsize\itshape}%
+        {4}%
+        {\z@}%
+        {\z@}%
+        {\hspace@after@section}%
+        {\@subsection@indent\normalfont\normalsize\itshape}%
     }
 \let\article@paragraph\paragraph
 \def\paragraph{\secdef{\article@aparagraph}{\article@bparagraph}}
@@ -755,11 +774,11 @@
 \def\article@bparagraph#1{\article@paragraph*{#1\@addpunct{.}}}
 \renewcommand\subparagraph{%
     \@startsection{subparagraph}%
-                  {5}%
-                  {\z@}%
-                  {\z@}%
-                  {\hspace@after@section}%
-                  {\@subsection@indent\normalfont\normalsize\itshape}%
+        {5}%
+        {\z@}%
+        {\z@}%
+        {\hspace@after@section}%
+        {\@subsection@indent\normalfont\normalsize\itshape}%
     }
 \let\article@subparagraph\subparagraph
 \def\subparagraph{\secdef{\article@asubparagraph}{\article@bsubparagraph}}
@@ -873,7 +892,7 @@
         }%
     }
 \docsvlist{ii,iii,iv}
-
+% 
 %  to \ref{lab1} enumerate items: \item[aaa]\label{lab1}
 \let\jphilart@save@item\@item
 \def\@item[#1]{%
@@ -905,7 +924,7 @@
     \@listdepth=\@ne
     \endlist
     }
-
+% 
 \def\quote@indent{\z@}
 \def\quote@leftmargin{\parindent}
 \def\quote@rightmargin{\parindent}
@@ -913,14 +932,14 @@
     \def\quote@leftmargin{\parindent}%
     \def\quote@rightmargin{\parindent}%
     }
-
+% 
 \let\quotation\quote
 \let\endquotation\endquote
 %%
 %%  ======= ENUNCIATIONS =======
 %%
 \RequirePackage{amsthm}
-
+% 
 \def\before@thm@skip{7.0pt plus 2.0pt minus 4.0pt}
 \def\after@thm@skip{6.0pt plus 2.0pt minus 4.0pt}
 \newtheoremstyle{romantheorem}%
@@ -932,9 +951,9 @@
     {.}%
     { }%
     {\thmname{#1}\thmnumber{ #2}\thmnote{ {\itshape(#3)}}}%
-\theoremstyle{romantheorem}%
+\theoremstyle{romantheorem}
 \gappto\@endtheorem{\@endpetrue}
-
+% 
 \def\before@proof@skip{4.0pt plus 2.0pt minus 4.0pt}
 \def\after@proof@skip{\medskipamount}
 \renewenvironment{proof}[1][\proofname]%
@@ -957,7 +976,7 @@
     }
 \appto\trivlist{%
     \setlength{\labelwidth}{1.5\parindent}%
-}
+    }
 %%  <<<<<<< ENVIRONMENTS <<<<<<<
 %%
 %%
@@ -981,7 +1000,7 @@
     \let\@oddfoot\@empty
     \let\@evenfoot\@empty
     \def\@oddhead{%
-        \csname check@head@line\endcsname%
+        \csname check@head@line\endcsname
         {\header@size\hfill
         {\scshapepro\MakeLowercase{\@runtitle}}%
         \hfill\llap{\headernumber@size\thepage}}}%
@@ -991,7 +1010,7 @@
     \let\sectionmark\@gobble
     \let\subsectionmark\@gobble
     }
-
+% 
 \def\check@head@line{%
     \bgroup
         \settowidth\@tempdima{\pseudo@head@line}%
@@ -1001,7 +1020,7 @@
         \fi
     \egroup
     }
-
+% 
 % range 0-9999
 \def\two@digits@lasttwo#1{%
     \@tempcnta=#1
@@ -1021,7 +1040,7 @@
                 \the\@tempcnta
             \fi
         \else
-            0\the\@tempcnta%
+            0\the\@tempcnta
         \fi
     \else
         !!%
@@ -1032,13 +1051,17 @@
 \def\copyright@text{%
     \raisebox{15mm}[\z@][\z@]{\hb@xt@\textwidth{\copyright@size
         \@issn\@earlypublication@gobble{/\two@digits@lasttwo\@pubyear/%
-        \two@digits@lasttwo\@volume%
-        \@ifundefined{multi@issue@last}
-            {\two@digits@lasttwo{\@issue}}
-            {\two@digits@lasttwo{\csuse{multi@issue@first}}-\two@digits@lasttwo{\csuse{multi@issue@last}}}/%
-        \@pagerange}
+        \two@digits@lasttwo\@volume
+        \@ifundefined{multi@issue@last}%
+            {\two@digits@lasttwo{\@issue}}%
+            {%
+                \two@digits@lasttwo{\csuse{multi@issue@first}}-%
+                \two@digits@lasttwo{\csuse{multi@issue@last}}%
+            }/%
+        \@pagerange}%
         \hfill
-        \copyright@symbol\hskip.33em\@earlypublication@gobble{\@copyrightyear\ }\@ifundefined{copyright@holder}{\@publisher}{\copyright@holder}%
+        \copyright@symbol\hskip.33em\@earlypublication@gobble{\@copyrightyear\ }%
+        \@ifundefined{copyright@holder}{\@publisher}{\copyright@holder}%
         }}%
     }
 %
@@ -1056,7 +1079,12 @@
     }
 \def\doi@CRConly{}
 \def\@doi@CRConly{%
-    \rlap{\raisebox{11.5mm}[\z@][\z@]{\hb@xt@\textwidth{\copyright@size\the@doi\hfill}}}%
+   \llap
+    {\raisebox{11.5mm}[\z@][\z@]{\hb@xt@\textwidth{\copyright@size
+    \csname tagpdf@paragraph@start\endcsname
+    \the@doi
+    \csname tagpdf@paragraph@stop\endcsname
+    \hfill}}}%
     }
 \ifdefined\CRC
     \g@addto@macro\CRC{\let\doi@CRConly\@doi@CRConly}
@@ -1088,9 +1116,22 @@
                     \header@size
                     \if@leadarticle
                     \else
-                        \rlap{\raisebox{\earlypublication@raise@journal}[\z@][\z@]{\hb@xt@\textwidth{\fontsize{10bp}{10bp}\selectfont\scshapepro\spaceskip=.343em\addfontfeature{LetterSpace=3}{THE JOURNAL OF PHILOSOPHY}\hfill}}}%
+                        \rlap{\raisebox{\earlypublication@raise@journal}[\z@][\z@]{%
+                            \hb@xt@\textwidth{%
+                                \fontsize{10bp}{10bp}\selectfont
+                                \scshapepro
+                                \spaceskip=.343em%
+                                \addfontfeature{LetterSpace=3}%
+                                {THE JOURNAL OF PHILOSOPHY}%
+                                \hfill
+                                }%
+                            }}%
                     \fi
-                    \rlap{\raisebox{\earlypublication@raise@date}[\z@][\z@]{\hb@xt@\textwidth{\@earlypublication@text\@earlypublication@date\hfill}}}%
+                    \rlap{\raisebox{\earlypublication@raise@date}[\z@][\z@]{%
+                        \hb@xt@\textwidth{%
+                            \@earlypublication@text\@earlypublication@date\hfill
+                            }%
+                        }}%
                     }%
                 \gdef\earlypublication@lines@lower{-1500}%
                 \gdef\earlypublication@lines@shrink{-1300}%
@@ -1101,119 +1142,171 @@
     }
 %
 \if@leadarticle
-\def\ps@copyright{%
-    \def\@oddfoot{%
-            \doi@CRConly\rlap{\raisebox{\copyright@raise@pagenum}[\z@][\z@]{\hb@xt@\textwidth{\hfill\normalsize\thepage\hfill}}}%
-            \copyright@text
-        }%
-    \let\@evenfoot\@oddfoot
-    \def\@oddhead{{%
-        \@earlypublication
-        \setlength{\unitlength}{0.01bp}%
-        \begin{picture}(29880,9760)%
-            \newsavebox{\jphilart@lead@thick@rule}%
-            \savebox{\jphilart@lead@thick@rule}(13160,297)[bl]{%
-                \linethickness{2.97bp}%
-                \put(0,0){\line(1,0){13160}}%
-                }%
-            \put(0,0){\usebox{\jphilart@lead@thick@rule}}%
-            \put(16759,0){\usebox{\jphilart@lead@thick@rule}}%
-            \put(0,\numexpr\earlypublication@lines@lower+9159\relax){\usebox{\jphilart@lead@thick@rule}}%
-            \put(16759,\numexpr\earlypublication@lines@lower+9159\relax){\usebox{\jphilart@lead@thick@rule}}%
-            \newsavebox{\jphilart@lead@thin@rule}%
-            \savebox{\jphilart@lead@thin@rule}(13160,50)[bl]{%
-                \linethickness{0.5bp}%
-                \put(0,0){\line(1,0){13160}}
-                }%
-            \put(0,640){\usebox{\jphilart@lead@thin@rule}}%
-            \put(16759,640){\usebox{\jphilart@lead@thin@rule}}%
-            \put(0,\numexpr\earlypublication@lines@lower+8767\relax){\usebox{\jphilart@lead@thin@rule}}%
-            \put(16759,\numexpr\earlypublication@lines@lower+8767\relax){\usebox{\jphilart@lead@thin@rule}}%
-            \newsavebox{\jphilart@lead@circle}%
-            \savebox{\jphilart@lead@circle}(400,400)[bl]{\put(0,0){\circle*{400}}}%
-            \put(14960,490){\usebox{\jphilart@lead@circle}}%
-            \put(14960,\numexpr\earlypublication@lines@lower+8960\relax){\usebox{\jphilart@lead@circle}}%
-            \newsavebox{\jphilart@lead@left@cross}%
-            \savebox{\jphilart@lead@left@cross}(788,404)[bl]{%
-                \linethickness{0.65bp}%
-                \put(0,202){\line(1,0){788}}%
-                \put(200,0){\line(0,1){404}}%
-                }%
-            \put(13470,285){\usebox{\jphilart@lead@left@cross}}%
-            \put(13470,\numexpr\earlypublication@lines@lower+8760\relax){\usebox{\jphilart@lead@left@cross}}%
-            \newsavebox{\jphilart@lead@right@cross}%
-            \savebox{\jphilart@lead@right@cross}(788,404)[bl]{%
-                \linethickness{0.65bp}%
-                \put(0,202){\line(1,0){788}}%
-                \put(588,0){\line(0,1){404}}%
-                }%
-            \put(15660,285){\usebox{\jphilart@lead@right@cross}}%
-            \put(15660,\numexpr\earlypublication@lines@lower+8760\relax){\usebox{\jphilart@lead@right@cross}}%
-            \newsavebox{\jphilart@lead@thin@hrule}%
-            \savebox{\jphilart@lead@thin@hrule}(29880,50)[bl]{%
-                \linethickness{0.5bp}%
-                \put(0,0){\line(1,0){29880}}%
-                }
-            \put(0,1840){\usebox{\jphilart@lead@thin@hrule}}%
-            \put(0,\numexpr\earlypublication@lines@lower+7570\relax){\usebox{\jphilart@lead@thin@hrule}}%
-            \@earlypublication@gobble{%
-                \ifnum\@pubmonth@present=\@ne\else
-                    \let\@pubmonth\@issue
-                    \let\multi@pubmonth@first\multi@issue@first
-                    \let\multi@pubmonth@last\multi@issue@last
-                \fi
-                \put(0,2990){\hb@xt@\textwidth{%
-                \edef\@tmp@romvol{\romannumeral\@volume}%
+    \def\ps@copyright{%
+        \def\@oddfoot{%
+            \csname tagpdf@paragraph@start\endcsname
+            \copyright@text\\
+            \doi@CRConly
+            \csname tagpdf@paragraph@stop\endcsname
+            \llap{\raisebox{\copyright@raise@pagenum}[\z@][\z@]{%
+              \csname tagpdf@pagination@start\endcsname
+              \hb@xt@\textwidth{%
+                \hfill\normalsize
+                \thepage
                 \hfill
-                \large \scshapepro \spaceskip=.295em%
-                volume \@tmp@romvol, no. \@issue,
-                \@ifundefined{multi@pubmonth@last}%
-                    {%
-                        \@ifundefined{month@item@\@pubmonth}%
-                            {???}%
-                            {\MakeLowercase{\csuse{month@item@\@pubmonth}}}%
+                }%
+              \csname tagpdf@pagination@stop\endcsname
+              }}%
+            }%
+        \let\@evenfoot\@oddfoot
+        \def\@oddhead{{%
+            \@earlypublication
+            \setlength{\unitlength}{0.01bp}%
+            \begin{leadpicture}(29880,9760)%
+                \csname tagpdf@artifact@start\endcsname
+                \newsavebox{\jphilart@lead@thick@rule}%
+                \savebox{\jphilart@lead@thick@rule}(13160,297)[bl]{%
+                    \linethickness{2.97bp}%
+                    \put(0,0){%
+                        \line(1,0){13160}%
+                        }%
                     }%
-                    {%
-                        \@ifundefined{month@item@\multi@pubmonth@first}%
-                            {???}%
-                            {\MakeLowercase{\csuse{month@item@\multi@pubmonth@first}}}%
-                        \multi@pubmonth@sep%
-                        \@ifundefined{month@item@\multi@pubmonth@last}%
-                            {???}%
-                            {\MakeLowercase{\csuse{month@item@\multi@pubmonth@last}}}%
-                    }\ 
-                \@pubyear
-                \hfill
-                }}}%
-            \put(0,\numexpr\earlypublication@lines@shrink+4785\relax){\hb@xt@\textwidth{%
-                \hfill
-                \fontsize{13.9bp}{13.9bp}\selectfont
-                \scshapepro \spaceskip=.443em\addfontfeature{LetterSpace=4}%
-                THE JOURNAL OF PHILOSOPHY%
-                \hfill
-                }}%
-        \end{picture}%
-        }}%
-    \let\@evenhead\@oddhead
-    \let\@mkboth\@gobbletwo
-    \let\sectionmark\@gobble
-    \let\subsectionmark\@gobble
-}
+                \put(0,0){\usebox{\jphilart@lead@thick@rule}}%
+                \put(16759,0){\usebox{\jphilart@lead@thick@rule}}%
+                \put(0,\numexpr\earlypublication@lines@lower+9159\relax){%
+                    \usebox{\jphilart@lead@thick@rule}%
+                    }%
+                \put(16759,\numexpr\earlypublication@lines@lower+9159\relax){%
+                    \usebox{\jphilart@lead@thick@rule}%
+                    }%
+                \newsavebox{\jphilart@lead@thin@rule}%
+                \savebox{\jphilart@lead@thin@rule}(13160,50)[bl]{%
+                    \linethickness{0.5bp}%
+                    \put(0,0){%
+                        \line(1,0){13160}%
+                        }%
+                    }%
+                \put(0,640){\usebox{\jphilart@lead@thin@rule}}%
+                \put(16759,640){\usebox{\jphilart@lead@thin@rule}}%
+                \put(0,\numexpr\earlypublication@lines@lower+8767\relax){%
+                    \usebox{\jphilart@lead@thin@rule}%
+                    }%
+                \put(16759,\numexpr\earlypublication@lines@lower+8767\relax){%
+                    \usebox{\jphilart@lead@thin@rule}%
+                    }%
+                \newsavebox{\jphilart@lead@circle}%
+                \savebox{\jphilart@lead@circle}(400,400)[bl]{%
+                    \put(0,0){%
+                        \circle*{400}%
+                        }%
+                    }%
+                \put(14960,490){\usebox{\jphilart@lead@circle}}%
+                \put(14960,\numexpr\earlypublication@lines@lower+8960\relax){%
+                    \usebox{\jphilart@lead@circle}%
+                    }%
+                \newsavebox{\jphilart@lead@left@cross}%
+                \savebox{\jphilart@lead@left@cross}(788,404)[bl]{%
+                    \linethickness{0.65bp}%
+                    \put(0,202){%
+                        \line(1,0){788}%
+                        }%
+                    \put(200,0){%
+                        \line(0,1){404}%
+                        }%
+                    }%
+                \put(13470,285){\usebox{\jphilart@lead@left@cross}}%
+                \put(13470,\numexpr\earlypublication@lines@lower+8760\relax){%
+                    \usebox{\jphilart@lead@left@cross}%
+                    }%
+                \newsavebox{\jphilart@lead@right@cross}%
+                \savebox{\jphilart@lead@right@cross}(788,404)[bl]{%
+                    \linethickness{0.65bp}%
+                    \put(0,202){%
+                        \line(1,0){788}%
+                        }%
+                    \put(588,0){%
+                        \line(0,1){404}%
+                        }%
+                    }%
+                \put(15660,285){\usebox{\jphilart@lead@right@cross}}%
+                \put(15660,\numexpr\earlypublication@lines@lower+8760\relax){%
+                    \usebox{\jphilart@lead@right@cross}%
+                    }%
+                \newsavebox{\jphilart@lead@thin@hrule}%
+                \savebox{\jphilart@lead@thin@hrule}(29880,50)[bl]{%
+                    \linethickness{0.5bp}%
+                    \put(0,0){%
+                        \line(1,0){29880}%
+                        }%
+                    }%
+                \put(0,1840){\usebox{\jphilart@lead@thin@hrule}}%
+                \put(0,\numexpr\earlypublication@lines@lower+7570\relax){%
+                    \usebox{\jphilart@lead@thin@hrule}%
+                    }%
+                \csname tagpdf@artifact@stop\endcsname
+                \@earlypublication@gobble{%
+                    \ifnum\@pubmonth@present=\@ne\else
+                        \let\@pubmonth\@issue
+                        \let\multi@pubmonth@first\multi@issue@first
+                        \let\multi@pubmonth@last\multi@issue@last
+                    \fi
+                    \put(0,2990){\hb@xt@\textwidth{%
+                    \edef\@tmp@romvol{\romannumeral\@volume}%
+                    \hfill
+                    \csname tagpdf@leadinfo@start\endcsname
+                    {\large \scshapepro \spaceskip=.295em%
+                    volume \@tmp@romvol, no. \@issue,
+                    \@ifundefined{multi@pubmonth@last}%
+                        {%
+                            \@ifundefined{month@item@\@pubmonth}%
+                                {???}%
+                                {\MakeLowercase{\csuse{month@item@\@pubmonth}}}%
+                        }%
+                        {%
+                            \@ifundefined{month@item@\multi@pubmonth@first}%
+                                {???}%
+                                {\MakeLowercase{\csuse{month@item@\multi@pubmonth@first}}}%
+                            \multi@pubmonth@sep
+                            \@ifundefined{month@item@\multi@pubmonth@last}%
+                                {???}%
+                                {\MakeLowercase{\csuse{month@item@\multi@pubmonth@last}}}%
+                        }\ 
+                    \@pubyear}%
+                    \csname tagpdf@leadinfo@stop\endcsname
+                    \hfill
+                    }}}%
+                \put(0,\numexpr\earlypublication@lines@shrink+4785\relax){\hb@xt@\textwidth{%
+                    \hfill
+                    \csname tagpdf@leadjournal@start\endcsname
+                    {\fontsize{13.9bp}{13.9bp}\selectfont
+                    \scshapepro \spaceskip=.443em\addfontfeature{LetterSpace=4}%
+                    THE JOURNAL OF PHILOSOPHY}%
+                    \hfill
+                    \csname tagpdf@leadjournal@stop\endcsname
+                    }}%
+            \end{leadpicture}%
+            }}%
+        \let\@evenhead\@oddhead
+        \let\@mkboth\@gobbletwo
+        \let\sectionmark\@gobble
+        \let\subsectionmark\@gobble
+        }
 \else
-\def\ps@copyright{%
-    \def\@oddfoot{%
-        \doi@CRConly\copyright@text
-        }%
-    \let\@evenfoot\@oddfoot
-    \def\@oddhead{{\header@size\@earlypublication\hfill
-        \@earlypublication@gobble{\scshapepro\MakeLowercase{\@runtitle}}%
-        \hfill\llap{\headernumber@size\thepage}}}%
-    \def\@evenhead{{\header@size\rlap{\headernumber@size\thepage}\hfill
-        {\scshapepro\MakeLowercase{\@journal}}\hfill}}%
-    \let\@mkboth\@gobbletwo
-    \let\sectionmark\@gobble
-    \let\subsectionmark\@gobble
-}
+    \def\ps@copyright{%
+        \def\@oddfoot{%
+            \copyright@text\\
+            \doi@CRConly
+            }%
+        \let\@evenfoot\@oddfoot
+        \def\@oddhead{{\header@size\@earlypublication\hfill
+            \@earlypublication@gobble{\scshapepro\MakeLowercase{\@runtitle}}%
+            \hfill\llap{\headernumber@size\thepage}}}%
+        \def\@evenhead{{\header@size\rlap{\headernumber@size\thepage}\hfill
+            {\scshapepro\MakeLowercase{\@journal}}\hfill}}%
+        \let\@mkboth\@gobbletwo
+        \let\sectionmark\@gobble
+        \let\subsectionmark\@gobble
+        }
 \fi
 %%
 %%  ======= REVIEW/BOOK REVIEW =======
@@ -1315,7 +1408,7 @@
                             \@subex{#1}{0.5em}%
                         \fi
                     }%
-                }
+                }%
             \def\endexe{%
                 \if@noftnote
                     \setcounter{exx}{\value{xnumi}}%
@@ -1378,4 +1471,5 @@
         }%
         {}%
     }
+\csname jphilart@end@settings\endcsname
 \endinput
